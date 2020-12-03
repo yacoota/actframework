@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+@args org.osgl.mvc.result.ErrorResult _error
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      background-color: #222;
+      color: #f1f1f1;
+      font-family: "Roboto", "Trebuchet MS", "Dejavu Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 1em;
+    }
+    a {color: #00b8b6;}
+    h1,h2,h3,h4,h5 {
+      font-family: "Franklin Gothic Medium", "Franklin Gothic", "ITC Franklin Gothic", Arial, sans-serif;
+      font-weight: bold;
+    }
+    h1 {
+      font-size: 42px;
+      color: #ee0000;
+    }
+    h2 {
+      font-size: 36px;
+    }
+    h3 {
+      font-size: 28px;
+    }
+    h4 {
+      font-size: 21px;
+    }
+    h5 {
+      font-size: 18px;
+    }
+    #act-version {
+      position:fixed;
+      bottom:0;
+      right:0;
+      font-size: 11pt;
+      padding: 5px 10px;
+    }
+  </style>
+  @render(head)
+</head>
+<body>
+@args String header
+@{
+  if (s().empty(header)) {
+    header = _error.toString();
+  }
+}
+<h1>@header</h1>
+@render()
+<div id="act-version">actframework-@act.Act.VERSION.getVersion()</div>
+</body>
+</html>
+@def boolean isDev() {return act.Act.isDev()}

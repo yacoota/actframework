@@ -1,0 +1,118 @@
+@extends(errorPage)
+
+@args org.osgl.mvc.result.ErrorResult _error
+
+@if(null != _conf.urlContext() && null == _action.router()) {
+<p>@actMsg("e404.url_context.not_match")</p>
+@return
+}
+
+@section(moreStyles){
+<style>
+  code, table {
+    font-family: "Envy Code R", "Fira Code", "Source Code Pro Semibold",  Monaco, Courier, monospace;
+    font-size: 11pt;
+  }
+  #route-table {
+    background-color: #000;
+    padding: 1px 6px;
+  }
+  table.hide {display: none;}
+  code {background-color: #444; padding: 0 4px; font-weight: bold;}
+  td.m, td.p, td.h, th.m, th.p, th.h  {
+    padding: 3px 20px;
+    text-align: left;
+    max-width: 40%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  td.p a {
+    text-decoration: none;
+  }
+  tr.odd {
+    background-color: #222;
+  }
+  tbody tr:hover, tbody tr.even:hover {
+    background-color: #883810;
+    cursor: default;
+  }
+  #toggle-routetable {
+    cursor: pointer;
+    color: #00b8b6;
+  }
+</style>
+}
+
+@import act.route.*
+@{
+  List<RouteInfo> routes = _action.router().debug();
+  act.route.RouteInfo req = RouteInfo.of(_action);
+}
+
+@def tr(RouteInfo r, String parity) {
+  <tr class="route @parity">
+    <td class="m">@r.method()</td>
+    <td class="p" title="@r.path()">
+      @if (r.method() == "GET") {
+        <a href="@r.path()">@r.path()</a>
+      } else {
+        @r.path()
+      }
+    </td>
+    <td class="h" title="@r.handler()">@r.compactHandler()</td>
+  </tr>
+}
+  @{
+    act.app.SourceInfo sourceInfo = null;
+    act.app.SourceInfo templateSourceInfo = null;
+    if (_error instanceof act.util.ActError) {
+      act.util.ActError actError = (act.util.ActError)_error;
+      sourceInfo = actError.sourceInfo();
+      if (_error instanceof act.view.RythmTemplateException) {
+        templateSourceInfo = ((act.view.RythmTemplateException) actError).templateSourceInfo();
+      }
+    }
+  }
+
+<p>
+  @if(null == sourceInfo && null == templateSourceInfo) {
+    @actMsg("e404.cannot_find_handler_in_req", req.method(), req.path()).raw()
+  }
+  @actMsg("e404.route_table")(<span id="toggle-routetable" class="expanded" onclick="toggleRouteTable()">@actMsg("e404.hide")</span>)</p>
+
+<table id="route-table">
+  <thead>
+  <tr>
+    <th class="m">@actMsg("e404.method")</th>
+    <th class="p">@actMsg("e404.path")</th>
+    <th class="h">@actMsg("e404.handler")</th>
+  </tr>
+  </thead>
+  <tbody>
+  @for(RouteInfo r: routes) {@tr(r, r_parity)}
+  </tbody>
+</table>
+
+  <script>
+  function toggleRouteTable() {
+    var btn = document.getElementById("toggle-routetable");
+    var tbl = document.getElementById("route-table");
+    if (btn.className == 'expanded') {
+      tbl.className = 'hide';
+      btn.className = 'collapsed';
+      btn.innerText = '@actMsg("e404.open")';
+    } else {
+      tbl.className = '';
+      btn.className = 'expanded';
+      btn.innerText = '@actMsg("e404.hide")';
+    }
+  }
+  @if(null != sourceInfo || null != templateSourceInfo) {
+  toggleRouteTable();
+  }
+</script>
+
+@section(description) {
+  @actMsg("e404.desc")
+}

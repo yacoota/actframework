@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  @args String title, String desc
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>@title</title>
+  @if(desc) {
+  <meta name="description" content="@desc">
+  }
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="/~/asset/css/normalize.css">
+  <link rel="stylesheet" href="/~/asset/css/skeleton.css">
+  <link rel="stylesheet" href="/asset/css/app.css">
+
+  @render(moreStyles)
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="images/favicon.png">
+
+</head>
+
+<body>
+
+<!-- Primary Page Layout
+–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+
+<div class="container">
+  @render()
+</div>
+<script src="/~/asset/js/jquery.js?v=@act.Act.VERSION.getBuildNumber()"></script>
+<script src="/~/asset/js/jquery.ext.js?v=@act.Act.VERSION.getBuildNumber()"></script>
+@render(moreScripts)
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+
+</body>
+</html>

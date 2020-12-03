@@ -1,0 +1,147 @@
+//  https://gitee.com/actframework/actframework.git
+plugins {
+    id 'java'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+}
+
+group 'org.actframework'
+version '1.9.1a-SNAPSHOT'
+
+sourceCompatibility = targetJavaVersion
+targetCompatibility = targetJavaVersion
+
+[compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+
+
+configurations {
+    // all*.exclude group: 'commons-logging'
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url "http://maven.aliyun.com/nexus/content/groups/public" }
+}
+
+ext {
+    fest_assert_version = "1.4"
+    junit_benchmarks_version = "0.7.2"
+    mockito_core_version = "2.0.2-beta"
+    act_asm_version = "5.0.6"
+    cdi_api_version = "1.2"
+    commons_fileupload_version = "1.3.3"
+    ecj_version = "3.22.0"
+    fastjson_version = "1.2.71"
+    bval_version = "1.1.2"
+    image4j_version = "0.7"
+    jansi_version = "1.18"
+
+    javaparser_version = "2.4.0"
+    javax_inject_version = "1"
+    javax_mail_version = "1.5.0-b01"
+    jfiglet_version = "0.0.8"
+    jline_version = "2.14.6"
+    jpa_version = "1.0.0.Final"
+    joda_time_version = "2.10.6"
+    jsoup_version = "1.12.1"
+
+    okhttp_version = "4.7.2"
+    osgl_tool_version = "1.25.0"
+    osgl_cache_version = "1.8.1"
+    osgl_genie_version = "1.13.2"
+    osgl_http_version = "1.13.2"
+    osgl_mvc_version = "1.13.2"
+    osgl_storage_version = "1.11.1"
+    osgl_tool_ext_version = "1.5.1"
+    patcha_version = "0.0.1"
+    reflectasm_version = "1.11.9"
+    rythmengine_version = "1.3.0"
+    validation_api_version = "1.1.0.Final"
+    undertow_version = "2.1.3.Final"
+    snakeyaml_version = "1.26"
+    zxing_javase_version = "3.4.0"
+    jaxb_version = "2.3.1"
+    javax_annotation_api_version = "1.3.2"
+
+    lombok_version = "1.18.12"
+}
+
+dependencies {
+//    implementation(platform('org.springframework.boot:spring-boot-dependencies:1.5.2.RELEASE')) {
+//        exclude group: "mysql", module: "mysql-connector-java"
+//    }
+
+    implementation(platform('org.osgl:parent:1.0.0-BETA-5'))
+
+    implementation "org.easytesting:fest-assert:${fest_assert_version}"
+    implementation "com.auth0:java-jwt:3.8.0"
+    implementation "com.google.code.maven-play-plugin.org.playframework:play:1.4.0"
+    implementation "org.mockito:mockito-core:2.0.2-beta"
+    implementation "com.carrotsearch:junit-benchmarks:${junit_benchmarks_version}"
+    implementation "javax.validation:validation-api:${validation_api_version}"
+    implementation "javax.mail:mail:${javax_mail_version}"
+    implementation "org.jclarion:image4j:${image4j_version}"
+    implementation "javax.enterprise:cdi-api:${cdi_api_version}"
+    implementation "com.github.javaparser:javaparser-core:${javaparser_version}"
+    implementation("com.google.zxing:javase:${zxing_javase_version}") {
+        exclude group: "com.google.android", module: "android"
+        exclude group: "com.github.jai-imageio", module: "jai-imageio-core"
+    }
+    implementation "org.fusesource.jansi:jansi:${jansi_version}"
+    implementation "com.github.lalyos:jfiglet:${jfiglet_version}"
+    implementation "org.jsoup:jsoup:${jsoup_version}"
+    implementation "com.github.bingoohuang:patchca:${patcha_version}"
+    implementation "org.actframework:act-asm:${act_asm_version}"
+    implementation "org.apache.bval:org.apache.bval.bundle:${bval_version}"
+    implementation "com.alibaba:fastjson:${fastjson_version}"
+    implementation "io.undertow:undertow-core:${undertow_version}"
+    implementation "com.squareup.okhttp3:okhttp:${okhttp_version}"
+    implementation "jline:jline:${jline_version}"
+    implementation "org.eclipse.jdt:ecj:${ecj_version}"
+    implementation "com.esotericsoftware:reflectasm:${reflectasm_version}"
+    implementation "commons-fileupload:commons-fileupload:${commons_fileupload_version}"
+    implementation "joda-time:joda-time:${joda_time_version}"
+    implementation "org.yaml:snakeyaml:${snakeyaml_version}"
+    implementation "org.osgl:genie:${osgl_genie_version}"
+    implementation "org.osgl:osgl-tool:${osgl_tool_version}"
+    implementation "org.osgl:osgl-cache:${osgl_cache_version}"
+    implementation "org.osgl:osgl-mvc:${osgl_mvc_version}"
+    implementation "org.osgl:osgl-http:${osgl_http_version}"
+    implementation "org.osgl:osgl-storage:${osgl_storage_version}"
+    implementation "org.osgl:osgl-tool-ext:${osgl_tool_ext_version}"
+    implementation("org.rythmengine:rythm-engine:${rythmengine_version}") {
+        exclude group: " org.eclipse.jdt.core.compiler", module: "ecj"
+    }
+    implementation "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:${jpa_version}"
+    implementation "javax.xml.bind:jaxb-api:${jaxb_version}"
+    implementation "javax.annotation:javax.annotation-api:${javax_annotation_api_version}"
+
+    // testCompile "org.springframework:spring-test:${spring_version}"
+
+    compileOnly "org.projectlombok:lombok:${lombok_version}"
+    annotationProcessor "org.projectlombok:lombok:${lombok_version}"
+    testCompileOnly "org.projectlombok:lombok:${lombok_version}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombok_version}"
+
+    // testCompile "org.springframework.boot:spring-boot-starter-test"
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/java', 'src/main/resources', 'src/main/webapp']
+        }
+    }
+}
+
+defaultTasks 'clean', 'build'

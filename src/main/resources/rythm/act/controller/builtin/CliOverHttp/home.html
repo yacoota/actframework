@@ -1,0 +1,132 @@
+@extends(act.base, title: "CLI Over HTTP")
+@import org.osgl.Osgl
+@args String title, boolean showSysCmd
+@section(moreStyles) {
+<style>
+  body {
+    background-color: #333;
+    color: #bbb;
+  }
+
+  #page-title {
+    padding-top: 50px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #777;
+  }
+
+  dt {
+    font-weight: bold;
+  }
+
+  dd {
+    margin: 0;
+    padding-left: 18px;
+  }
+
+  #command-nav {
+    border-right: 1px solid #777;
+  }
+
+  .command {
+    padding: 12px 10px 12px 20px;
+    cursor: pointer;
+  }
+
+  .command:hover {
+    background-color: #555;
+  }
+
+  .command.active {
+    background-color: #777;
+    color: #333
+  }
+
+  #detail input {
+    color: #000;
+  }
+
+  #detail select * {
+    color: #000;;
+  }
+
+  #detail pre {
+    font-family: "Envy Code R",Consolas,Menlo,Monaco,"Lucida Console","Liberation Mono","DejaVu Sans Mono","Bitstream Vera Sans Mono","Courier New",monospace;
+    font-size: 13px;
+  }
+
+  .hidden {
+    display: none;
+  }
+  .button, button, input[type="submit"], input[type="reset"], input[type="button"] {
+    color: #aaa
+  }
+  .button:hover, button:hover, input[type="submit"]:hover, input[type="reset"]:hover, input[type="button"]:hover,
+  .button:focus, button:focus, input[type="submit"]:focus, input[type="reset"]:focus, input[type="button"]:focus {
+    color: #eee
+  }
+</style>
+}
+@args act.cli.CliDispatcher dispatcher
+
+@def commandList(List<String> commandList) {
+  <dl class="command-list">
+    @for(String cmd: commandList) {
+    @{
+    act.handler.CliHandler handler = dispatcher.handler(cmd);
+    $.T2
+    <String
+    , String> commandLine = handler.commandLine();
+    }
+    <div class="command" data-cmd="@cmd">
+      <dt>
+        <i class="fa fa-wrench" aria-hidden="true"></i>&nbsp;@cmd
+      </dt>
+      <dd>
+        @commandLine._2
+      </dd>
+    </div>
+    } else {
+    <span>No command found ...</span>
+    }
+  </dl>
+  }
+
+  <div class="row">
+    <h1 id="page-title">@title</h1>
+  </div>
+  <div class="row">
+    <div class="four columns" id="command-nav">
+      <div id="app-commands">
+        @if(showSysCmd) {
+        <h5>Application commands</h5>
+        }
+        @commandList(dispatcher.applicationCommands())
+      </div>
+
+      @if(showSysCmd) {
+      <div id="sys-commands">
+        <h5>System commands</h5>
+        @commandList(dispatcher.systemCommands())
+      </div>
+      }
+    </div>
+    <div id="detail" class="eight columns">
+      <p>
+        Click on the command list in the left navigation column to load command panel
+      </p>
+    </div>
+  </div>
+
+  @section(moreScripts){
+  <script>
+    var curCmd;
+    $('div.command').click(function () {
+      curCmd = $(this).data('cmd');
+      $('div.command').removeClass('active');
+      $(this).addClass('active');
+      $.get('/cmd', {cmd: curCmd}, function (detail) {
+        $('#detail').html(detail).removeClass('hidden')
+      })
+    })
+  </script>
+  }

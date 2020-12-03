@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+@import act.util.DataTable, org.osgl.Lang, org.osgl.util.S
+@args DataTable table
+<table class="act_data_table">
+  @if(!table.isTransposed()) {
+  <thead>
+  <tr>
+  @for(table.heading()) {
+  <th>@(_.equals("_this_") ? "data" : _)</th>
+  }
+  </tr>
+  </thead>
+  }
+  <tbody>
+  @def boolean isUrl(Object v) {
+    if (null == v) {return false;}
+    if (!(v instanceof String) && !(v instanceof Appendable)) {
+      return false;
+    }
+    String s = v.toString();
+    return s.startsWith("http://") || s.startsWith("https://");
+  }
+  @def String addHtmlTableAccept(Object v) {
+    if (null == v) return "";
+    String url = v.toString();
+    return url + (url.contains("?") ? "&" : "?") + "_accept=htmltable";
+  }
+  @def String toString(Object v, boolean withPre) {
+    if (null == v) return "";
+    if (!Lang.isSimpleType(v.getClass())) {
+      String s = com.alibaba.fastjson.JSON.toJSONString(v, true);
+      s = S.strip(s).of(S.DOUBLE_QUOTES);
+  return withPre ? "<pre>" + s + "</pre>" : s;
+    }
+    return v.toString();
+  }
+  @def String toString(Object v) {
+    return toString(v, true);
+  }
+  @for(Object row: table) {
+  <tr>
+    @for(String label: table.heading()) {
+    @{
+      Object v = table.val(row, label)
+    }
+    <td
+            @if(label.equals(DataTable.KEY_FIELD)){
+              class="act_data_table_label act_data_table_right"
+            } else if(table.isRightAligned(label)) {
+              class="act_data_table_right"
+            } else {
+              class="act_data_table_left"
+            }
+      @if(toString(v).length() > 50) {
+      title="@toString(v, false)"
+      }
+    >
+      @if(isUrl(v)) {
+        <a href="@addHtmlTableAccept(v)" target="_blank">@v</a>
+      } else if (null == v || "".equals(v.toString().trim())) {
+        &nbsp;
+      } else {
+        @toString(v).raw()
+      }
+    </td>
+    }
+  </tr>
+  }
+  </tbody>
+</table>

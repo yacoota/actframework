@@ -1,0 +1,164 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+#Runtime
+GET /yemian/{yemianId}/ CMYingyong.jiazaiYemian
+* /tuiguang/{tuiguangId}/ CMYingyong.jiazaiTuiguang
+GET /jilu/{jiluId} CMYingyong.jilu
+GET /toupiao CMYingyong.toupiao
+GET /tandcdialog CMYingyong.tAndCDialog
+* /weixinyingyong/{yingyongId}/ WeixinAppFuwuqi.jiazai
+* /zhuangzai/yingyong/{yingyongId}/ WeixinAppFuwuqi.jiazai
+POST /tuiguang/{tuiguangId}/x CMYingyong.tijiao
+POST /tuiguang/{tuiguangId}/vote CMYingyong.toupiaoJilu
+POST /yemian/{yemianId}/fasongyoujian CMYingyong.fasongyoujian
+POST /shangchuang CMYingyong.wenjianShangChuan
+
+GET /ziyuan2/{id} Ziyuan.fangwen2
+GET /ziyuan/{id} Ziyuan.fangwen
+GET /ziyuan/{id}/{mingzi} Ziyuan.mingZiFangWen
+GET /dynacss Yemian2.dynaCss
+
+GET /tutu123 CMYingyong.tutu123
+
+GET /ushangchuanger CMYingyong.ushangchuanger
+
+GET /tutu123/token CMYingyong.tutu123Token
+
+# Ziyuan Guanliyuan
+GET /z ziyuan.Guanliqi.zhuye
+GET /cm ziyuan.Guanliqi.zhuye
+GET /dn/new ziyuan.Guanliqi.createZiyuan
+POST /dn/new ziyuan.Guanliqi.createZiyuan
+POST /dn/shangchuangicon ziyuan.Guanliqi.shangchuangIcon
+POST /dn/editicon ziyuan.Guanliqi.editIcon
+
+GET /dn/{tuiguangId}/ ziyuan.Guanliqi.shezhi
+GET /dn/{tuiguangId}/jilu/ ziyuan.Guanliqi.jilu
+GET /dn/{tuiguangId}/baobiao/ ziyuan.Guanliqi.baobiao
+GET /dn/fangwenicon/{fileMingzi} ziyuan.Guanliqi.fangwenIcon
+POST /dn/{tuiguangId}/attribute ziyuan.Guanliqi.setShuxin
+
+GET /tupianji Ziyuan.Guanliyuan.tupianji
+GET /tupianji/{tuiguangId}/ ziyuan.Guanliqi.xianshiMuban
+
+# Kuhu Guanliyuan
+GET /ziliao/ yonghu.Guanliyuan.ziliao
+POST /ziliao yonghu.Guanliyuan.saveProfile
+GET /ziliao/fuwu yonghu.Guanliyuan.fuwu
+GET /ziliao/yonghu yonghu.Guanliyuan.yonghus
+GET /ziliao/fukuan yonghu.Guanliyuan.fukuan
+GET /ziliao/me yonghu.Guanliyuan.me
+
+
+# Payments
+GET /p/acr Payments.receiveAccessCodeReadmlt
+
+# Zhuye
+GET / xui.ZhuyeUI.zhuye
+GET /pendingApps xui.ZhuyeUI.pendingAppAdminTasks
+GET /tuiguang xui.ZhuyeUI.tuiguang
+GET /fuwu xui.ZhuyeUI.fuwu
+GET /zhanghu xui.ZhuyeUI.zhanghu
+GET /yonghus xui.ZhuyeUI.yonghus
+GET /yonghu/{id} xui.ZhuyeUI.yonghu
+#GET /tuiguangs/liebiao Ziyuans.liebiao
+#GET /tuiguangs/{id} Ziyuans.xianshi
+
+GET /resetpass Kuhus.resetPasswordForm
+
+# data
+GET /shuju/tuiguang/logo/{id} shuju.TuiguangShuju.logo
+GET /shuju/tuiguang/icon/{id} shuju.TuiguangShuju.icon
+GET /shuju/tuiguang/{id}/mubiao/{mubiao} shuju.TuiguangShuju.jiazaiTarfangwen
+GET /shuju/tuiguang/{id}/mubiaoTabs shuju.TuiguangShuju.jiazaiTarfangwenTabs
+GET /shuju/tuiguang/{id} shuju.TuiguangShuju.jiazai
+GET /shuju/tuiguang/{id}/hasEntryShuju shuju.tuiguangShuju.hasEntryShuju
+GET /shuju/tuiguang/{id}/downloadEntries shuju.TuiguangShuju.downloadEntries
+GET /shuju/yemian/{yemianId}/attribute/{key} shuju.PageShuju.fangwenShuxin
+GET /shuju/yemian/html/{yemianId} shuju.PageShuju.fangwenHtml
+GET /shuju/yemian/metatags/{yemianId} shuju.PageShuju.fangwenMetaTags
+GET /shuju/yemian/{yemianId}/thumbnail shuju.PageShuju.thumbnail
+POST /shuju/tuiguang/shezhi shuju.TuiguangShuju.shezhi
+POST /shuju/tuiguang/{id}/ziliao shuju.TuiguangShuju.gengxinProfile
+POST /shuju/tuiguang/{id}/mubiao/{<.{24}>mubiao}/tianjiaPage shuju.TuiguangShuju.tianjiaPage
+POST /shuju/tuiguang/{id}/mubiao/{<.{24}>mubiao}/yemian/{<[0-9]+>yemianIndex}/remove shuju.TuiguangShuju.removePage
+POST /shuju/tuiguang/{id}/delete shuju.TuiguangShuju.delete
+POST /shuju/tuiguang/logo/{id} shuju.TuiguangShuju.shangchuangLogo
+POST /shuju/tuiguang/icon/{id} shuju.TuiguangShuju.shangchuangIcon
+POST /shuju/yemian/newComponent shuju.PageShuju.tianjiaXinComponent
+POST /shuju/yemian/removeComponent shuju.PageShuju.removeComponent
+POST /shuju/yemian/{id}/background shuju.PageShuju.setBackground
+POST /shuju/yemian/{id} shuju.PageShuju.gengxin
+POST /shuju/yemian/{yemianId}/component/{componentId} shuju.PageShuju.gengxinComponent
+POST /shuju/tuiguang/savetandc shuju.TuiguangShuju.saveTAndC
+
+#File Upload
+POST /shuju/shangchuang/saveShareImage shuju.UploadFuwuqi.saveShareImage
+POST /shuju/shangchuang/saveImage shuju.UploadFuwuqi.saveImage
+POST /shuju/shangchuang/saveFile shuju.UploadFuwuqi.saveFile
+POST /shuju/shangchuang/saveCsv shuju.UploadFuwuqi.saveCsv
+POST /shuju/shangchuang/carousel shuju.UploadFuwuqi.saveCarouselImage
+
+GET /shuju/yonghu/liebiao shuju.KuhuShuju.liebiao
+GET /shuju/yonghu/jianchaXinMingzi shuju.KuhuShuju.jianchaXinMingzi
+GET /shuju/yonghu/jianchaUpdateMingzi shuju.KuhuShuju.jianchaUpdateMingzi
+GET /shuju/yonghu/fuwus shuju.KuhuShuju.liebiaoFuwu
+
+POST /shuju/yonghu/new shuju.KuhuShuju.tianjiaXin
+POST /shuju/yonghu/ziliao/mingzi shuju.KuhuShuju.gengxinMingzi
+POST /shuju/yonghu/gengxinMingzi shuju.KuhuShuju.gengxinMingzi
+POST /shuju/yonghu/gengxinActive shuju.KuhuShuju.gengxinActive
+POST /shuju/yonghu/guanliYonghu/shanchu shuju.KuhuShuju.removeAdminUser
+POST /shuju/yonghu/guanliYonghu/tianjia shuju.KuhuShuju.tianjiaAdminUser
+POST /shuju/yonghu/tianjiaXinUser shuju.KuhuShuju.tianjiaXinUser
+
+POST /shuju/fuwu/xin shuju.FuwuShuju.tianjiaXin
+POST /shuju/fuwu/fensiyeId shuju.FuwuShuju.gengxinFanyemianId
+POST /shuju/fuwu/kaishi shuju.FuwuShuju.gengxinBegin
+POST /shuju/fuwu/jiesu shuju.FuwuShuju.gengxinEnd
+
+GET /xui/yonghu/{id} xui.KuhuGuanliyuanUI.zhuye
+
+GET /xui/my/fuwu/{id} xui.MyUI.fuwu
+
+GET /baobiao Yingyong.chaKanBaoBiao
+
+# notifiers
+POST /password/forgot/{yonghuming} notifiers.Mails.passwordForgot
+
+# ZiDongWanCheng service
+GET /shuju/zidongwancheng/weixinPermissions ZiDongWanChengFuwuqi.weixinPermissions
+
+# Ignore favicon requests
+GET     /favicon.ico                            404
+
+# Map static resources from the /yingyong/public folder to the /public path
+#GET /lib/ staticDir:public/lib
+#GET /bs/ staticDir:public/lib/bootstrap
+#GET /img/ staticDir:public/images
+#GET /public/ staticDir:public
+#GET /js/ staticDir:public/javascripts
+#GET /css/ staticDir:public/stylesheets
+
+# chaojiyonghu luyou
+GET /adm/denglu ChaoJiYongHu.denglu
+GET /adm/ ChaoJiYongHu.zhuye
+GET /adm/yonghu ChaoJiYongHu.yonghuList
+GET /adm/yonghu/new ChaoJiYongHu.tianjiaXinKuhu
+GET /adm/yonghu/{id}/ ChaoJiYongHu.yonghu
+GET /adm/yonghu/{yonghuId}/yonghu ChaoJiYongHu.yonghuUser
+GET /adm/yonghu/{yonghuId}/bill ChaoJiYongHu.yonghuInvoice
+GET /adm/yonghu/{yonghuId}/fuwu ChaoJiYongHu.yonghuSubscription
+GET /adm/tuiguang ChaoJiYongHu.tuiguangList
+GET /adm/tuiguang/{id}/ ChaoJiYongHu.tuiguang
+GET /adm/weixinyingyong ChaoJiYongHu.weixinYingYongLieBiao
+GET /adm/weixinyingyong/new ChaoJiYongHu.tianjiaFBApp
+GET /adm/weixinyingyong/{id}/ ChaoJiYongHu.weixinYingYong
+
+
+* /ceshi Yingyong.ceshi
+* /ceshi2 Yingyong.ceshi2
+* /ceshi3 Yingyong.ceshi3
+

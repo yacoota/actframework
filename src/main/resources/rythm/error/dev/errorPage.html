@@ -1,0 +1,321 @@
+@args String header
+@extends(_base, header: header)
+@returnIf(!isDev())
+
+@render()
+
+@ifNot(_error instanceof act.util.ActError) {
+@section(head){
+<style>
+    .error-message {
+      padding: 8px;
+      border: 1px solid #888;
+      font-size: 11pt;
+      margin-bottom: 20px;
+      color: #f54400;
+    }
+</style>
+@render(moreStyles)
+}
+@if(_error.getLocalizedMessage()) {
+<pre class="error-message" style="white-space: pre-wrap;">
+  @_error.getLocalizedMessage()
+</pre>
+}
+@return
+}
+@{
+act.util.ActError actError = (act.util.ActError)_error;
+act.app.SourceInfo sourceInfo = actError.sourceInfo();
+act.app.SourceInfo templateSourceInfo = null;
+if (_error instanceof act.view.TemplateException) {
+templateSourceInfo = ((act.view.TemplateException) actError).templateSourceInfo();
+}
+act.route.RouteInfo routeInfo = null != _action ? act.route.RouteInfo.of(_action) : null;
+boolean isCompileError = actError.getCauseOrThis() instanceof act.app.CompilationException;
+List<String> stackTrace;
+  if (isCompileError) {stackTrace = null;}
+  else {stackTrace = actError.stackTrace();}
+  boolean activeSource = null == templateSourceInfo && null != sourceInfo;
+  boolean activeStack = null == templateSourceInfo && !activeSource && (null != stackTrace && !stackTrace.isEmpty());
+  }
+
+  @section(head){
+  <style>
+    .detail {
+      font-family: "Envy Code R", "Fira Code", "Source Code Pro Semibold",  Monaco, Courier, monospace;
+      font-size: 11pt;
+      padding: 20px;
+      padding-top: 8px;
+      border: 1px solid #888;
+      display: none;
+      overflow: auto;
+    }
+    .detail.active {
+      display: block;
+    }
+    .error-message {
+      padding: 8px;
+      border: 1px solid #888;
+      font-size: 11pt;
+      margin-bottom: 20px;
+      color: #f54400;
+    }
+    .source-info .hljs {
+      padding: 0;
+    }
+    .source-info .line.error, .trace-line.error {
+      background-color: #e00;
+      color: #fff;
+      cursor: pointer;
+    }
+    .source-info .line span {
+      display: inline-block;
+    }
+    .source-info .line span.line-number {
+      min-width: 20px;
+      text-align: right;
+      color: #eee;
+    }
+    .source-info .line.big-line, .trace-line.big-line {
+      margin-top: 1.5em;
+      font-weight: bold;
+      padding-left: 0px;
+      border-bottom: 1px solid #aaa;
+      color: red;
+    }
+    .source-info.active {
+      background-color: #000;
+      color: #aaa;
+    }
+    #stacktrace .exception {
+      font-size: 9pt;
+      font-weight: bold;
+      padding-bottom: 5px;;
+    }
+    #stacktrace.active {
+      background-color: #000;
+      color: #aaa;
+    }
+    .trace-line {
+      padding: 4px 15px;
+    }
+    .template-line, .source-line {
+      padding: 0px 0px;
+      padding-bottom: 2px;
+    }
+    .tabs .tab {
+      display: inline-block;
+      padding: 2px 10px;
+      cursor: pointer;
+      font-size: 9pt;
+      font-weight: bold;
+    }
+    .tabs .tab.active {
+      background: #efefef;
+      color: #333;
+    }
+    .error-column {
+      background-color: white;
+      color: red;
+      padding: 2px;
+    }
+  </style>
+  @render(moreStyles)
+  <link rel="stylesheet" href="/~/asset/css/highlight.min.css?v=@act.Act.VERSION.getBuildNumber()">
+  <script src="/~/asset/js/jquery.js?v=@act.Act.VERSION.getBuildNumber()"></script>
+  <script src="/~/asset/js/highlight.min.js?v=@act.Act.VERSION.getBuildNumber()"></script>
+  <script src="/~/asset/js/highlight.java.min.js?v=@act.Act.VERSION.getBuildNumber()"></script>
+  }
+
+  <pre class="error-message" style="white-space: pre-wrap;">
+  @if(templateSourceInfo) {
+  @(((act.view.TemplateException) actError).errorMessage().raw())
+    } else {@{String actErrMsg = actError.getLocalizedMessage();} @if(!s().isEmpty(actErrMsg)) {<b>@actErrMsg</b>@if(actError.getCause()){<br/> - }} @if(actError.getCause()) {@actError.getCause().getClass().getName(): <b>@actError.getCause().getLocalizedMessage()}</b>}
+  </pre>
+
+  <div class="tabs">
+    @if(templateSourceInfo) {
+    <div id="tab-template" class="code tab active" onclick="showTemplate()">@actMsg("error_page.template_code")</div>
+    }
+    @if(sourceInfo) {
+    <div id="tab-source" class="code tab @if(activeSource){active}" onclick="showSource()">@actMsg("error_page.source_code")</div>
+    }
+    @if(stackTrace) {
+    <div id="tab-stacktrace" class="stacktrace tab @if(activeStack){active}"" onclick="showStacktrace()">@actMsg("error_page.stacktrace")</div>
+  }
+  </div>
+
+  @if(templateSourceInfo) {
+  <div id="template" class="detail source-info active">
+    @for(String line: templateSourceInfo.lines()) {
+    @{
+    String cls = line_index == templateSourceInfo.lineNumber() ? "error nohighlight" : ""
+    }
+    <div class="template-line line @cls" data-line="@line_index">
+      <span class="line-number">@line_index</span>
+      <span class="line-code">@line.sp2nbsp()</span>
+    </div>
+    }
+  </div>
+  }
+  @if(stackTrace) {
+  <div id="stacktrace" class="detail @if(activeStack) {active}">
+    @{boolean traceErrorSet = false;}
+    @for(int i = 0; i < stackTrace.size(); ++i) {
+    @{
+    String trace = stackTrace.get(i);
+    String nextTrace = "";
+    if (i < stackTrace.size() - 1) {
+    nextTrace = stackTrace.get(i + 1);
+    }
+    String cls = "";
+    if (!traceErrorSet) {
+    if (null != sourceInfo && trace.contains(sourceInfo.fileName() + ":" + sourceInfo.lineNumber())) {
+    cls = "error";
+    traceErrorSet = true;
+    } else if (actError.isErrorSpot(trace, nextTrace)) {
+    cls = "error";
+    traceErrorSet = true;
+    }
+    }
+    if (trace.contains("Caused by")) {
+    cls = cls + " big-line";
+    }
+    }
+    <div class="trace-line line @cls">@trace</div>
+    }
+  </div>
+  }
+
+  @returnIf(null == sourceInfo && null == templateSourceInfo)
+
+  @if(sourceInfo) {
+  <div id="source" class="detail source-info @if(activeSource){active}">
+    @for(String line: sourceInfo.lines()) {
+    @{
+    boolean isErrorLine = line_index == sourceInfo.lineNumber();
+    String cls = isErrorLine ? "error nohighlight" : ""
+    }
+    <div class="source-line line @cls" data-line="@line_index">
+      <span class="line-number">@line_index</span>
+      <span class="line-code">
+        @ifNot(isErrorLine || sourceInfo.column() < 0) {
+          @line.escapeHtml().sp2nbsp()
+        } else {
+          @line.escapeHtml().errorLine(sourceInfo.column())
+        }
+      </span>
+    </div>
+    }
+  </div>
+  }
+
+
+  <script>
+      function showSource() {
+      @if (templateSourceInfo) {
+              document.getElementById("template").className = "detail source-info";
+              document.getElementById("tab-template").className = "tab";
+          }
+
+      @if (stackTrace) {
+              document.getElementById("stacktrace").className = "detail";
+              document.getElementById("tab-stacktrace").className = "tab";
+          }
+
+      @if (sourceInfo) {
+              document.getElementById("source").className = "detail source-info active";
+              document.getElementById("tab-source").className = "tab active";
+              var e = new Event('show-source');
+              window.dispatchEvent(e);
+          }
+      }
+      function showTemplate() {
+      @if(templateSourceInfo) {
+              document.getElementById("template").className = "detail source-info active";
+              document.getElementById("tab-template").className = "tab active";
+          }
+      @if (stackTrace) {
+              document.getElementById("stacktrace").className = "detail";
+              document.getElementById("tab-stacktrace").className = "tab";
+          }
+
+      @if (sourceInfo) {
+              document.getElementById("source").className = "detail source-info";
+              document.getElementById("tab-source").className = "tab";
+          }
+          var e = new Event('show-template-source');
+          window.dispatchEvent(e);
+      }
+      function showStacktrace() {
+      @if(templateSourceInfo) {
+              document.getElementById("template").className = "detail source-info";
+              document.getElementById("tab-template").className = "tab";
+          }
+
+      @if (stackTrace) {
+              document.getElementById("stacktrace").className = "detail active";
+              document.getElementById("tab-stacktrace").className = "tab active";
+          }
+
+      @if (sourceInfo) {
+              document.getElementById("source").className = "detail source-info";
+              document.getElementById("tab-source").className = "tab";
+          }
+      }
+      @if (templateSourceInfo) {
+          function scrollTemplateSource() {
+              var element = document.getElementsByClassName('template-line line error nohighlight')[0];
+              element.scrollIntoView();
+              element.parentElement.scrollTop -= 100;
+          }
+          var templateSourceLoaded = false;
+          $('body').on('click', '#template .line.error', function() {
+              $.getJSON('http://localhost:8091?message=@(templateSourceInfo.fileName()):@(templateSourceInfo.lineNumber())')
+          });
+          var windowHeight = $(window).height(), maxDetailHeight = windowHeight - 280;
+          $('.detail').css({maxHeight: maxDetailHeight + 'px'});
+          window.addEventListener('show-template-source', function() {
+              if (templateSourceLoaded) return;
+              templateSourceLoaded = true;
+              scrollTemplateSource();
+          }, false);
+          $(document).ready(function() {
+              $('.line-code').each(function(i, block) {
+                  hljs.highlightBlock(block);
+              });
+          });
+          setTimeout(scrollTemplateSource, 200);
+      }
+      @if (sourceInfo) {
+          function scrollJavaSource() {
+              if (sourceLoaded) return;
+              sourceLoaded = true;
+              var element = document.getElementsByClassName('source-line line error nohighlight')[0];
+              element.scrollIntoView();
+              element.parentElement.scrollTop -= 100;
+          }
+          var sourceLoaded = false;
+      @{
+              int linkedSourceLineNumber = sourceInfo.lineNumber();
+              if (null != templateSourceInfo && templateSourceInfo.fileName().equals(sourceInfo.fileName())) {
+                  linkedSourceLineNumber = templateSourceInfo.lineNumber();
+              }
+          }
+          $('body').on('click', '#source .line.error', function() {
+              $.getJSON('http://localhost:8091?message=@(sourceInfo.fileName()):@linkedSourceLineNumber')
+          });
+          var windowHeight = $(window).height(), maxDetailHeight = windowHeight - 280;
+          $('.detail').css({maxHeight: maxDetailHeight + 'px'});
+          window.addEventListener('show-source', scrollJavaSource, false);
+          $(document).ready(function() {
+              $('.line-code').each(function(i, block) {
+                  hljs.highlightBlock(block);
+              });
+          });
+      @if(activeSource) {
+              setTimeout(scrollJavaSource, 200);
+          }
+      }
+  </script>
